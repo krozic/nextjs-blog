@@ -1,0 +1,93 @@
+.header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.header h1 {
+	text-align: left;
+}
+
+.header h3 {
+	text-align: right;
+	/* padding-right: 1rem; */
+}
+
+.header a {
+	transition: 0.2s;
+}
+.header a:hover {
+	color: grey;
+}
+
+.tags {
+  font-size: 1.1rem;
+	padding: 2rem 0.7rem;
+}
+
+.tags p {
+	display: inline-block;
+	padding: 0rem 1rem;
+}
+
+.tags span {
+	font-size: 0.8rem;
+	padding-left: 0.3rem;
+	vertical-align: 0.7rem;
+}
+
+.tags a {
+	padding: 0.5rem 0rem;
+  transition: 0.2s;
+	color: white;
+}
+
+.tags a:before {
+  font-size: 1.3rem;
+  content: "[ "
+}
+
+.tags a:after {
+  font-size: 1.3rem;
+  content: " ]";
+}
+
+/* .tags a:last-child:after {
+  font-size: 1.3rem;
+  content: " ] ";
+} */
+
+/* .tags a:hover::after {
+  content: " ";
+} */
+
+.tags a:hover {
+  /* color: rgb(92, 190, 255); */
+  color: grey;
+  /* border-bottom: white solid; */
+}
+
+@media (max-width: 450px) {
+	.header {
+		grid-template-columns: 1fr;
+		align-items: center;
+	}
+
+	.header h1 {
+		text-align: center;
+		align-items: center;
+		margin-bottom: 1.5rem;
+	}
+
+	.header h3 {
+		text-align: center;
+		margin-bottom: 0.5rem;
+	}
+
+	.tags p {
+		display: block;
+		text-align: center;
+		/* padding: 0 0.5rem; */
+		font-size: 0.9rem;
+		margin: 0.3rem 0;
+	}
+}

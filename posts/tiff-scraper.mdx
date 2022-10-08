@@ -1,0 +1,38 @@
+---
+title: TIFF Data Scraping with Organization in Excel
+type: Project
+tags: ['Python', 'bs4', 'pandas', 'Excel', 'twilio']
+stack: Python
+date: '2019-09-07'
+thumb: ../images/tiff-scraper/TIFF19.jpg
+featuredImg: ../images/tiff-scraper/TIFF19.jpg
+links: {
+	GitHub: 'https://github.com/krozic/TIFF-2019',
+}
+description: [
+	'Sometimes it is difficult to tell which movies are worth seeing at a film festival since they have never been seen before. In 2019, TIFF decided to allow attendees to "heart" the films they wished to see. I decided to use this as a metric for "popularity" so I could better decide which films were worth attending.'
+]
+---
+
+# TIFF-2019
+
+Movie_Grabber.py extracts film information from https://2019.tiffr.com using `bs4` to build the variables 'Title', 'Director', 'Category', 'Link', and the metric 'Heart' to gauge the popularity of the title. A comma separated file 'movies.csv' is exported which can then be explored in any spreadsheet software.
+
+'Text_Notification.py' takes a list of films and sends a text message using `twilio` when tickets become available for the title.
+
+### Spreadsheet Sample
+
+{/* <div style={{'text-align': 'center'}}> */}
+<div>
+	![Top 20 Films](/images/tiff-scraper/table_screenshot.png)
+</div>
+{/* <div style={{margin: '0rem 2.5rem'}}>
+	<Image
+		src={ '/images/tiff-scraper/table_screenshot.png' }
+		alt='app'
+
+
+	/>
+</div> */}
+
+Without this application, I would not have bought tickets for Jojo Rabbit, Knives Out, Parasite or The Lighthouse, which turned out to be great films at the festival.

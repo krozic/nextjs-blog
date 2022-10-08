@@ -1,0 +1,103 @@
+.footer {
+	font-size: 12px;
+	text-align: center;
+	color: #bbb;
+	margin: 50px auto;
+	text-transform: uppercase;
+	word-spacing: 1px;
+	letter-spacing: 2px;
+	overflow-x: hidden;
+	overflow: hidden;
+	position: relative;
+	/* list-style: none; */
+}
+
+/* .footer ul li {
+	display: inline-block;
+	line-height: 1.5;
+	padding: 0 1.5em;
+	margin-bottom: 1em;
+	border-left: 1px solid;
+} */
+
+.footer ul {
+	/* display: flex; */
+	/* display: inline; */
+	/* display: inline-block; */
+	/* flex-direction: row; */
+	/* flex-wrap: wrap; */
+	/* justify-content: space-between; */
+	/* justify-content: center; */
+	line-height: 1.5;
+	margin-left: -1px;
+	text-align: center;
+
+	list-style-type: none;
+	position: relative;
+	/* position: center; */
+	left: -1px;
+	padding: 0;
+}
+
+.footer li {
+	color: #bbb;
+	display: inline;
+	/* flex-grow: 1; */
+	/* flex-basis: auto; */
+	/* margin: 8.25em 0.1em; */
+	/* padding: 8em 1.3em; */
+	/* text-align: center; */
+	/* border-left: 1px solid #bbb; */
+}
+
+
+.footer li + li::before {
+	padding: 0 0.5em;
+	content: " | ";
+	font-size: 16px;
+}
+
+.footer a {
+	font-size: 12px;
+	color: #bbb;
+	padding-bottom: 2px;
+	border-bottom: 1px dotted;
+	transition: 0.3s;
+}
+
+.footer a:hover {
+	color: white;
+	border-bottom: none;
+}
+
+.footer p {
+	margin: 1em;
+}
+
+.footerOld p {
+	font-size: 12px;
+	text-align: center;
+	color: #bbb;
+	margin: 50px auto;
+	text-transform: uppercase;
+	word-spacing: 1px;
+	letter-spacing: 2px;
+}
+
+.footerOld a {
+	font-size: 12px;
+	color: #bbb;
+	padding-bottom: 2px;
+	border-bottom: 1px dotted;
+	transition: 0.3s;
+}
+
+.footerOld a:hover {
+	color: white;
+	border-bottom: none;
+}
+
+.footerOld u {
+	font-size: 16px;
+	color: #bbb;
+}
