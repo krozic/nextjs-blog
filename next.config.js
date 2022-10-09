@@ -4,6 +4,10 @@ const nextConfig = {
   swcMinify: true,
   env: {
     title: 'Kyle Rozic',
+  },
+  images: {
+    unoptimized: true,
+    // loader: 'vercel'
   }
 }
 

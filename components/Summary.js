@@ -16,8 +16,9 @@ const Summary = () => {
         </div>
         <div className={ styles.nextImage }>
 					<Image
-						src='/../public/images/banner/banner-eng.png'
+						src='/images/banner/banner-eng.png'
 						alt='banner'
+						// layout='fill'
 						layout='responsive'
 						width={1600}
 						height={1600}
