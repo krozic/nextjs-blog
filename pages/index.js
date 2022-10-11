@@ -5,6 +5,7 @@ import Technologies from '../components/Technologies'
 import Summary from '../components/Summary'
 
 export default function Home() {
+
   return (
     // <div className={styles.container}>
     <div>
