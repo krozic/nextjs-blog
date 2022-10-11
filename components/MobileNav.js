@@ -4,10 +4,10 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 const StyledBurger = styled.div`
-	/* display: none;
+	display: none;
 	@media (max-width: 850px) {
 		display: block;
-	} */
+	}
 
 	button {
 		z-index: 100;
