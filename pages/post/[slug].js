@@ -11,6 +11,7 @@ import YouTube from '/components/youTube'
 import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import rehypeHighlight from 'rehype-highlight'
+import powershell from 'highlight.js/lib/languages/powershell'
 import 'highlight.js/styles/atom-one-dark.css'
 import markdownStyle from '/styles/Markdown.module.css'
 import { getSlugs } from '/src/api'
@@ -39,6 +40,11 @@ const post = ({
 				</div>
 				<p className={ markdownStyle.sites }>
 					{ Object.keys(links).map(site => <Link key={ site } href={ links[site] }>{ `${site} ` }</Link>) }
+					{/* { Object.keys(links).map((site, index) => {
+						const link = <li key={ site }><Link key={ site } href={ links[site] }>{ `${site} ` }</Link><img src="/images/links/external.svg" alt="ext" /></li>
+						const link = <li key={ index }><a key={ site } href={ links[site] }>{ `${site} ` }</a></li>
+						return link
+ 					}) } */}
 					{/* { Object.keys(links).map(site => <Link key='' href={ links[site] }>{ `View ${site}` }</Link>) } */}
 				</p>
 				{/* <hr className='test'></hr> */}
@@ -92,7 +98,7 @@ export const getStaticProps = async ({ params: { slug } }) => {
 			rehypePlugins: [
 				rehypeSlug,
 				[rehypeAutolinkHeadings, { behavior: 'wrap' }],
-				rehypeHighlight,
+				[rehypeHighlight, { languages: {powershell} }],
 			]
 		}
 	})

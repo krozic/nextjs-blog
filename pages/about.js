@@ -6,11 +6,11 @@ import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 const about = () => {
 	return (
 		<div className={ styles.about }>
-			<div>
+			<div className={ styles.aboutGrid }>
 				<h1>About</h1>
 				<p>Data Analyst with experience visualizing and curating user data to increase company product success. Proficient in the exploration and analysis of large datasets to extract actionable insights. Superior ability to prioritize and communicate information to a range of teams, from technical teams to account managers.</p>
 			</div>
-			<div>
+			<div className={ styles.linksGrid }>
 				<h1>External Links</h1>
 				<div className={ styles.links }>
 					<li><a href='https://github.com/krozic' target='_blank'><FontAwesomeIcon icon={ faGithub } /><text>Github</text></a></li>

@@ -31,7 +31,7 @@
 	color: rgb(56, 56, 56);
 	color: white;
 	/* background: #00609c; */
-	box-shadow: inset 2px 2px 15px #5ac0ff;
+	box-shadow: inset 3px 3px 15px #5ac0ff;
 }
 
 .btn:hover {
@@ -47,7 +47,9 @@
 	box-shadow: inset 2px 2px 20px #00609c;
 	box-shadow: inset 1px 1px 9px #003e64;
 	box-shadow: inset 1px 1px 9px #002e4a;
+	box-shadow: inset 1px 1px 9px #002e4a;
 	/* box-shadow: inset 1px 1px 9px #00000093; */
+	/* box-shadow: inset 1px 1px 9px #000000d0; */
 	filter:brightness(1.1);
 	filter:blur(6);
 }

@@ -10,6 +10,678 @@ links: {
 	GitHub: 'https://github.com/krozic/youtube_aws_analysis',
 }
 description: [
-	"Built storage & pipeline infrastructure with AWS CLI then loaded structured and semi-structured YouTube data into S3 Data Lake. Transformed .csv and .json data into Apache Parquet with python scripts on AWS Lambda and Glue ETL. Built data catalogs with Glue Crawler to form the schema of the Data Lake and built a Glue ETL to produce an Analytic Table. Visualized results in a dashboard using AWS QuickSight."
+	'Built storage & pipeline infrastructure with AWS CLI then loaded structured and semi-structured YouTube data into S3 Data Lake. Transformed .csv and .json data into Apache Parquet with python scripts on AWS Lambda and Glue ETL. Built data catalogs with Glue Crawler to form the schema of the Data Lake and built a Glue ETL to produce an Analytic Table. Visualized results in a dashboard using AWS QuickSight.'
 ]
 ---
+
+
+### What to Learn
+- Build a data lake in S3
+	- Joining semi-structured and structured data
+- Lake house architecture design
+	- Best practices -> cost and performance
+- Data lake vs. Data Warehouse
+- Data lake design in layers, partitioned for cost performance
+	- e.g. landing, cleansed as SSOT, reporting for BI users
+	- WORM model / Write Once Read Many
+- AWS Data Catalogue
+	- Using glue
+- ETL in AWS Glue Spark jobs
+	- Amazon SageMaker Jupyter Notebooks
+- Amazon SNS for alerting
+- SQL using Amazon Athena and Spark SQL
+	- i.e. impact of querying the optimized data layers
+- Write script to Ingest changes incrementally
+- Build proper schema (also schema evolution)
+- BI dashboards in Amazon QuickSight
+
+### Overview
+- Why Data Lake and not Data Warehouse?
+	- Cost: Redshift costs a lot of money
+		- Glue and Athena are serverless, so you pay per query/operation
+		- Redshift 
+	- Scalable
+- Why Parquet?
+	- Column based storage rather than row based like .csv
+	- When analyzing data, columns are often subset which are quicker with this file format
+	- Similar to the storage system Redshift uses (column-oriented DBMS)
+
+### The Dataset
+- Top trending videos
+	- based on user interactions: 
+		- Number of views
+		- shares
+		- comments
+		- likes
+	- NOT the most-viewed overall for the year
+- [kaggle](https://www.kaggle.com/datasets/datasnaek/youtube-new?resource=download)
+	- [source](https://github.com/mitchelljy/Trending-YouTube-Scraper)
+
+### Cloud Benefits
+- 'A 10-node cluster running for 10 hours costs the same as a 100-node cluster running for one hour'
+- On-premise means:
+	- Procurement, approval, licensing
+	- Shipping, installation, electricity, cooling systems,...
+	- Underutilized vs overutilized
+	- Pay even when nobody is using the hardware
+	- Sustainability issues
+
+### AWS
+- 200+ services
+	- Compute
+	- Storage and databases
+	- AI and ML
+	- Data lakes and Analytics
+	- Internet of Things
+
+#### Create Account
+- https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/
+- https://www.youtube.com/watch?v=kbtDJHgjrPc&t=294s
+
+#### Best Practices
+- Always protect root account
+	- Don't use it for projects
+- Enable MFA wherever you can
+	- i.e. Google Authenticator
+- Rotate all keys and passwords periodically
+- Avoid "credential" files in shared computers
+	- e.g. https://github.com/99designs/aws-vault
+- Follow least privilege principle always
+
+#### Interaction
+- AWS console
+- Programmatically
+	- AWS CLI
+	- SDK
+		- Python, NodeJS, etc all software development kits
+
+```
+aws configure
+```
+
+```
+aws s3 ls
+```
+
+All AWS CLI follows this [command reference](https://awscli.amazonaws.com/v2/documentation/api/latest/index.html)
+
+#### Naming Conventions for S3
+```
+s3://company-raw-awsregion-awsaccountID-env/source/source_region/tablename/year=yyyy/month=mm/day=dd/table_<yearmonthday>.<file_format>
+
+env = dev, test, prod
+source = name or indicator of source
+source_region = region of data source
+```
+
+krozic-youtube-raw-useast1-dev
+
+#### Creating Our S3 Bucket
+- [Create a bucket](https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html)
+- [Encrypt bucket](https://docs.aws.amazon.com/cli/latest/reference/s3api/put-bucket-encryption.html)
+
+Bucket creation:
+```powershell
+aws s3api create-bucket `
+	--bucket krozic-youtube-raw-useast1-dev `
+	--region us-east-1 `
+	--object-ownership BucketOwnerEnforced `
+	--output text >> setup.log
+```
+
+Encryption:
+```powershell
+aws s3api put-bucket-encryption `
+	--bucket krozic-youtube-raw-useast1-dev `
+	--server-side-encryption-configuration '{\"Rules\": [{\"ApplyServerSideEncryptionByDefault\": {\"SSEAlgorithm\": \"AES256\"}}]}'
+```
+
+Restrict Public Access:
+```powershell
+aws s3api put-public-access-block `
+	--bucket krozic-youtube-raw-useast1-dev `
+	--public-access-block-configuration "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"
+```
+
+#### Populating the S3 Bucket
+- json:
+```powershell
+aws s3 cp . s3://krozic-youtube-raw-useast1-dev/youtube/raw_statistics_reference_data/ `
+	--recursive `
+	--exclude "*" `
+	--include "*.json"
+```
+
+- csv:
+```powershell
+aws s3 cp CAvideos.csv s3://krozic-youtube-raw-useast1-dev/youtube/raw_statistics/region=ca/
+aws s3 cp DEvideos.csv s3://krozic-youtube-raw-useast1-dev/youtube/raw_statistics/region=de/
+aws s3 cp FRvideos.csv s3://krozic-youtube-raw-useast1-dev/youtube/raw_statistics/region=fr/
+aws s3 cp GBvideos.csv s3://krozic-youtube-raw-useast1-dev/youtube/raw_statistics/region=gb/
+aws s3 cp INvideos.csv s3://krozic-youtube-raw-useast1-dev/youtube/raw_statistics/region=in/
+aws s3 cp JPvideos.csv s3://krozic-youtube-raw-useast1-dev/youtube/raw_statistics/region=jp/
+aws s3 cp KRvideos.csv s3://krozic-youtube-raw-useast1-dev/youtube/raw_statistics/region=kr/
+aws s3 cp MXvideos.csv s3://krozic-youtube-raw-useast1-dev/youtube/raw_statistics/region=mx/
+aws s3 cp RUvideos.csv s3://krozic-youtube-raw-useast1-dev/youtube/raw_statistics/region=ru/
+aws s3 cp USvideos.csv s3://krozic-youtube-raw-useast1-dev/youtube/raw_statistics/region=us/
+```
+
+### Building a Data Lake
+- Basics of Lake House architecture
+- What is the AWS Glue Data Catalog
+- Catalog our YouTube data
+- [Reference](https://aws.amazon.com/blogs/big-data/build-a-lake-house-architecture-on-aws/)
+
+Key Elements:
+- Scalable Data Lakes
+- Purpose-built Data Services
+- Seamless Data Movement
+- Unified Governance
+- Performant and Cost-effective
+
+#### IAM Role 
+- Must first create a 'Role' so that AWS Glue can interact with the S3 bucket
+	- **Manual**
+- 'use cases for other AWS Services': Glue
+- Search for S3: AmazonS3FullAccess
+- Role name: krozic-youtube-glue-s3-role
+- Add Permission -> Attach Policies
+- Search 'Glue': AWSGlueServiceRole
+	- For EC2, S3, and Cloudwatch Logs
+	
+```powershell
+aws iam create-role `
+	--role-name krozic-youtube-glue-s3-role `
+	--assume-role-policy-document file://policies/trust-glue.json
+
+aws iam attach-role-policy `
+	--role-name krozic-youtube-glue-s3-role `
+	--policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
+	
+aws iam attach-role-policy `
+	--role-name krozic-youtube-glue-s3-role `
+	--policy-arn arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
+```
+
+#### AWS Glue Catalog 
+
+- Data Catalog: Information about our data and what it contains
+- Ex. Labeling all columns and what they are
+- Builds a metadata catalog that allows ETL to be performed
+
+- Create Database:
+```powershell
+aws glue create-database `
+	--database-input '{\"Name\": \"krozic_youtube_raw\", \"Description\": \"This database is created using AWS CLI\"}'
+```
+
+- Create Crawler:
+```powershell
+aws glue create-crawler `
+	--name "krozic-youtube-raw-glue-catalog-1" `
+	--database-name "krozic_youtube_raw" `
+	--role "krozic-youtube-glue-s3-role" `
+	--targets '{\"S3Targets\": [{\"Path\": \"s3://krozic-youtube-raw-useast1-dev/youtube/raw_statistics_reference_data\"}]}'
+```
+
+Run Crawler:
+```powershell
+aws glue start-crawler --name "krozic-youtube-raw-glue-catalog-1"
+```
+
+#### AWS Athena
+- Used to query tables
+- Cannot use without defining an 'output location'
+	
+- Create new S3 bucket:
+```powershell
+aws s3api create-bucket `
+	--bucket krozic-youtube-raw-useast1-athena-job `
+	--region us-east-1 `
+	--object-ownership BucketOwnerEnforced `
+	--output text >> setup.log
+	
+aws s3api put-bucket-encryption `
+	--bucket krozic-youtube-raw-useast1-athena-job `
+	--server-side-encryption-configuration '{\"Rules\": [{\"ApplyServerSideEncryptionByDefault\": {\"SSEAlgorithm\": \"AES256\"}}]}'
+	
+aws s3api put-public-access-block `
+	--bucket krozic-youtube-raw-useast1-athena-job `
+	--public-access-block-configuration "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"
+```
+
+- Attach to Athena as output
+	- **Manual**
+- Get error because of json formatting
+	- SerDe (Serialize deserialize)
+- Requirement: Data Cleansing
+	- Create light ETL: JSON to Apache Parquet
+		- Column and Row format
+
+![[Pasted image 20220613162115.png]]
+
+#### AWS Lambda
+- JSON data is stored on S3
+- Inside Lambda you can write python or another language to transform the data
+- Then build the Glue Crawler on this clean data
+
+First create a new role: **Manual**
+- Add lambda role
+- Use policy AmazonS3FullAccess
+- Name: krozic-youtube-lambda-s3-role
+- programatic:
+```powershell
+aws iam create-role `
+	--role-name krozic-youtube-lambda-s3-role `
+	--assume-role-policy-document file://policies/trust-lambda.json
+
+aws iam attach-role-policy `
+	--role-name krozic-youtube-lambda-s3-role `
+	--policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
+	
+aws iam attach-role-policy `
+	--role-name krozic-youtube-lambda-s3-role `
+	--policy-arn arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
+```
+
+- Create lambda function: **Not Done/working**
+- Must create a zip file with python contents and dependencies
+```powershell
+aws lambda create-function `
+	--function-name krozic-youtube-raw-useast1-lambda-json-parquet2 `
+	--runtime python3.8 `
+	--environment file://lambda_environment.json `
+	//--code file://lambda_function.py `
+	--role arn:aws:iam::747879646971:role/krozic-youtube-lambda-s3-role
+```
+
+Environment Variables to add:
+```json
+{
+  "Variables": {"string": "string"
+    ...}
+}
+```
+
+#### Python Script
+- Uses awswrangler to read S3 files
+- Unnests the json data to extract just the category info
+- This python script uses 'awswrangler' and creates a 'glue catalog', acting sort of like a glue crawler but in a lambda function.
+
+- Create new S3 to store clean data
+```powershell
+aws s3api create-bucket `
+	--bucket krozic-youtube-clean-useast1-dev `
+	--region us-east-1 `
+	--object-ownership BucketOwnerEnforced `
+	--output text >> setup.log
+	
+aws s3api put-bucket-encryption `
+	--bucket krozic-youtube-clean-useast1-dev `
+	--server-side-encryption-configuration '{\"Rules\": [{\"ApplyServerSideEncryptionByDefault\": {\"SSEAlgorithm\": \"AES256\"}}]}'
+	
+aws s3api put-public-access-block `
+	--bucket krozic-youtube-clean-useast1-dev `
+	--public-access-block-configuration "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"
+```
+
+- Create new DB for clean data:
+```powershell
+aws glue create-database `
+	--database-input '{\"Name\": \"krozic_youtube_clean\", \"Description\": \"This database is created using AWS CLI\"}'
+```
+
+- Create script to clean data:
+```python
+import awswrangler as wr
+import pandas as pd
+import urllib.parse
+import os
+
+# Temporary hard-coded AWS Settings; i.e. to be set as OS variable in Lambda
+os_input_s3_clean_layer = os.environ['s3_clean_layer']
+os_input_glue_catalog_db_name = os.environ['glue_catalog_db_name']
+os_input_glue_catalog_table_name = os.environ['glue_catalog_table_name']
+os_input_write_data_operation = os.environ['write_data_operation']
+
+
+def lambda_handler(event, context):
+    # Get the object from the event and show its content type
+    bucket = event['Records'][0]['s3']['bucket']['name']
+    key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
+    try:
+
+        # Creating DF from content
+        df_raw = wr.s3.read_json('s3://{}/{}'.format(bucket, key))
+
+        # Extract required columns:
+        df_step_1 = pd.json_normalize(df_raw['items'])
+		
+		# Change type to match raw_statistics
+		df_step_1['id'] = df_step_1['id'].astype('int')
+
+        # Write to S3
+        wr_response = wr.s3.to_parquet(
+            df=df_step_1,
+            path=os_input_s3_clean_layer,
+            dataset=True,
+            database=os_input_glue_catalog_db_name,
+            table=os_input_glue_catalog_table_name,
+            mode=os_input_write_data_operation
+        )
+
+        return wr_response
+    except Exception as e:
+        print(e)
+        print('Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.'.format(key, bucket))
+        raise e
+```
+
+Click 'Deploy' **Manual**
+
+Configure test event: **Manual**
+- Modify Template: 's3-put'
+- Records: s3: bucket: name: 'krozic-youtube-raw-useast1-dev'
+- Records: s3: bucket: arn: arn:aws:s3:::krozic-youtube-raw-useast1-dev
+- Records: s3: object: key: youtube/raw_statistics_reference_data/US_category_id.json
+
+**Why only do US_category_id.json?**
+
+*After testing, an error showing no module 'awswrangler'...*
+
+#### Lambda Limitations
+- Deployment package is 50MB
+	- You can use /tmp or mount EFS volumes: More storage and share it across executions
+	- 10 GB for memory
+	- 6 vCPUs
+	- 15 min timeout
+
+#### Architecture
+![[Pasted image 20220613223825.png]]
+
+#### Lambda Layers
+- Convenient way to package libraries and other dependencies
+- Reduces the size of uploaded deployment, so it's faster to deploy your code
+- Promote code sharing and separation of responsibilities
+	- Simpler iterations, so faster on writing business logic
+
+Add layer: **Manual**
+- AWSDataWrangler-Python38
+https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html
+https://awscli.amazonaws.com/v2/documentation/api/latest/reference/lambda/create-function.html
+
+*New Error: GetTable AccessDenied*
+- Need to add 'AWSGlueServiceRole' to the lambda role
+
+### Crawling CSV Data
+- Create Crawler:
+```powershell
+aws glue create-crawler `
+	--name "krozic-youtube-raw-csv-crawler-1" `
+	--database-name "krozic_youtube_raw" `
+	--role "krozic-youtube-glue-s3-role" `
+	--targets '{\"S3Targets\": [{\"Path\": \"s3://krozic-youtube-raw-useast1-dev/youtube/raw_statistics\"}]}'
+```
+
+Run Crawler:
+```powershell
+aws glue start-crawler --name "krozic-youtube-raw-csv-crawler-1"
+```
+
+- This crawler builds a 'partitioned' raw_statistics table schema based on the folder structure containing the many csv files
+- All the .csv can be queried as one big table
+- This table can also be joined to the .json data that was wrangled and glued earlier
+
+#### Joining Data in Athena
+- raw_statistics 'category_id' is int, while clean_statistics_reference_data 'id' is string
+- Either can CAST() in Athena or can change the type 
+- Actually went back and changed the lambda script to modify type
+- As data gets more complex, it will be slower and slower to run these queries
+- Time to convert to parquet in an ETL to increase efficiency
+
+#### Glue ETL *Manual*
+- Glue -> ETL -> Jobs (legacy) -> Add Job
+	- Name: krozic-youtube-clean-csv-to-parquet
+	- Role: krozic-youtube-glue-s3-role
+	- Job bookmark: Enable
+	- Job metrics: [x]
+	- Data source: raw_statistics
+	- Data target: 
+		- Data store: S3
+		- Format: Parquet
+		- Target path: s3://krozic-youtube-clean-useast1-dev/youtube/raw_statistics/
+	- Change all 'long' to 'bigint' where necessary
+
+#### Optimizing PySpark Script
+- datasink4 writes a single file into S3 bucket destination
+	- We want the data partitioned like the source
+
+```python
+from awsglue.dynamicframe import DynamicFrame
+
+# Convert dropnullfields3 into dataframe
+datasink1 = dropnullfields3.toDF().coalesce(1)
+# Build final output and create dynamic dataframe
+df_final_output = DynamicFrame.fromDF(datasink1, glueContext, "df_final_output")
+
+# Add '"partitionKeys": ["region"]' to data target:
+datasink4 = glueContext.write_dynamic_frame.from_options(frame = dropnullfields3, connection_type = "s3", connection_options = {"path": "s3://krozic-youtube-clean-useast1-dev/youtube/raw_statistics/", "partitionKeys": ["region"]}, format = "parquet", transformation_ctx = "datasink4")
+```
+
+- Save -> Run Job
+- Error: An error occurred while calling o143.pyWriteDynamicFrame. Unable to parse file: MXvideos.csv
+	- Program cannot interpret different languages
+	- Need to encode in UTF (to do)
+	- For now, just filter out data with this problem
+		- predicate_pushdown = "region in ('ca', 'gb', 'us')"
+		- Add 'push_down_predicate = predicate_pushdown' to 
+- Successfully creates parquet files, partitioned by country
+
+#### Glue Crawler for Clean Parquet Data
+- Crawler name: krozic-youtube-clean-csv-to-parquet-etl
+- Include path: s3://krozic-youtube-clean-useast1-dev/youtube/raw_statistics/
+- Role: krozic-youtube-glue-s3-role
+- Database: krozic_youtube_clean
+
+- Create Crawler:
+```powershell
+aws glue create-crawler `
+	--name "krozic-youtube-clean-csv-to-parquet-etl" `
+	--database-name "krozic_youtube_clean" `
+	--role "krozic-youtube-glue-s3-role" `
+	--targets '{\"S3Targets\": [{\"Path\": \"s3://krozic-youtube-clean-useast1-dev/youtube/raw_statistics\"}]}'
+```
+
+Run Crawler:
+```powershell
+aws glue start-crawler --name "krozic-youtube-clean-csv-to-parquet-etl"
+```
+
+#### Lambda for ALL .json files
+- Automatically run Lambda code when files are added
+- Lambda -> Add Trigger -> S3
+	- Bucket: krozic-youtube-raw-useast1-dev
+	- Event type: All object create events
+	- Prefix: youtube/raw_statistics_reference_data/
+	- Suffix: .json
+	- Recursive Invocation: I Acknowledge
+
+- Testing this method:
+	- Delete all .json in raw_statistics_reference_data
+	- Delete parquet files in clean folder
+	- Re-upload all .json files to check lambda is triggered
+
+### Creating ETL for the Reporting Layer
+- As data grows larger, the data will be difficult to query everyday for analysis
+- Better to create another storage system for data meant for analytics
+- Glue -> Glue Studio -> Create
+	- Name: krozic-youtube-parquet-analytics
+	- Source: AWS Glue Data Catalog
+		- Database: krozic_youtube_clean
+		- Table: clean_statistics_reference_data
+	- Source: AWS Glue Data Catalog
+		- Database: krozic_youtube_clean
+		- Table: raw_statistics
+	- Transform: Join
+		- Join type: Inner join
+		- Node properties:
+			- Node parents: both
+		- Transform:
+			- Add condition: category_id = id
+	- Target: S3
+		- Format: Parquet
+		- Compression Type: Snappy
+		- S3 Target Location: s3://krozic-youtube-analytics-useast1-dev
+		- Database: krozic_youtube_analytics
+		- Table name: final_analytics
+		- Add a partition key: region
+		- Add a partition key: category_id
+	- Job Details:
+		- Role: krozic-youtube-glue-s3-role
+- Had to create glue-assets bucket before saving (role issue? other glue ETL created folders...)
+- Save -> Run
+
+To do before the above steps:
+- Create new bucket for analytical data
+```powershell
+aws s3api create-bucket `
+	--bucket krozic-youtube-analytics-useast1-dev `
+	--region us-east-1 `
+	--object-ownership BucketOwnerEnforced `
+	--output text >> setup.log
+	
+aws s3api put-bucket-encryption `
+	--bucket krozic-youtube-analytics-useast1-dev `
+	--server-side-encryption-configuration '{\"Rules\": [{\"ApplyServerSideEncryptionByDefault\": {\"SSEAlgorithm\": \"AES256\"}}]}'
+	
+aws s3api put-public-access-block `
+	--bucket krozic-youtube-analytics-useast1-dev `
+	--public-access-block-configuration "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"
+```
+
+- Create DB for analytics data:
+```powershell
+aws glue create-database `
+	--database-input '{\"Name\": \"krozic_youtube_analytics\", \"Description\": \"This database is created using AWS CLI\"}'
+```
+
+#### Benefits of Analytic Dataset
+- Using clean data:
+```SQL
+SELECT ref.snippet_title, stats.title, stats.title
+FROM raw_statistics stats
+	INNER JOIN clean_statistics_reference_data ref on (stats.category_id = ref.id)
+WHERE ref.id = 2
+```
+
+VS
+
+- Using Analytic data:
+```SQL
+SELECT snippet_title, title, title
+FROM rpt_youtube_statistics_categories
+WHERE id = 2
+```
+- No joins, just a single filter to get desired data
+
+
+### QuickSight Dashboard
+- Create QuickSight User
+- Give access to S3 buckets
+- Datasets -> New Dataset (import data from Athena to QuickSight)
+	- Athena
+		- Data source name: youtube_analytics_dashboard
+		- Validate Connection
+		- Database: krozic_youtube_analytics
+		- Table: final_analytics
+		- Edit/preview -> Save & Publish
+- Datasets -> final_analytics -> Create analysis
+- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### AWS Teardown
+- Delete Bucket:
+```powershell
+aws s3api delete-bucket `
+	--bucket krozic-youtube-raw-useast1-dev `
+	--region us-east-1
+	
+aws s3api delete-bucket `
+	--bucket krozic-youtube-raw-useast1-athena-job `
+	--region us-east-1
+	
+aws s3api delete-bucket `
+	--bucket krozic-youtube-clean-useast1-dev `
+	--region us-east-1
+	
+aws s3api delete-bucket `
+	--bucket krozic-youtube-analytics-useast1-dev `
+	--region us-east-1
+```
+
+- Delete Database:
+```powershell
+aws glue delete-database --name "krozic_youtube_raw"
+aws glue delete-database --name "krozic_youtube_clean"
+aws glue delete-database --name "krozic_youtube_analytics"
+```
+
+- Delete Crawler:
+```powershell
+aws glue delete-crawler --name "krozic-youtube-raw-glue-catalog-1"
+```
+
+- Delete Roles:
+need to detatch-role-policy first...
+and remove-role-from-instance-profile
+and delete-role-policy
+```powershell
+aws iam detach-role-policy `
+	--role-name krozic-youtube-glue-s3-role `
+	--policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
+aws iam detach-role-policy `
+	--role-name krozic-youtube-glue-s3-role `
+	--policy-arn arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
+aws iam delete-role --role-name krozic-youtube-glue-s3-role
+
+aws iam detach-role-policy `
+	--role-name krozic-youtube-lambda-s3-role `
+	--policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
+aws iam detach-role-policy `
+	--role-name krozic-youtube-lambda-s3-role `
+	--policy-arn arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
+aws iam delete-role --role-name krozic-youtube-lambda-s3-role
+```
+
+
+
+
+
+
+
+
+### Next Steps
+- Added glue job 'reduced_metadata' to make a new file with reduced redundancy
+- Added crawler to catalog this new data
+
+```powershell
+aws glue create-crawler `
+	--name "krozic-youtube-clean-reduced-metadata" `
+	--database-name "krozic_youtube_clean" `
+	--role "krozic-youtube-glue-s3-role" `
+	--targets '{\"S3Targets\": [{\"Path\": \"s3://krozic-youtube-clean-useast1-dev/youtube/reduced_metadata\"}]}'
+```

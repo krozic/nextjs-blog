@@ -11,34 +11,24 @@ links: {
 	App: 'https://imdb-genre-rank.herokuapp.com/'
 }
 description: [
-	"This application takes a chosen film as an input and creates a plot and table describing the rank of the film for the specific genres it is categorized in.",
+	'This application takes a chosen film as an input and creates a plot and table describing the rank of the film for the specific genres it is categorized in.',
 	
-	"2 datasets, 2 APIs, and a web crawler comprise the backend data handling for this project and the data visualization framework `Dash` was used for the application frontend."
+	'2 datasets, 2 APIs, and a web crawler comprise the backend data handling for this project and the data visualization framework `Dash` was used for the application frontend.'
 ]
 ---
 
-# Film Rank by Genre
 
-  
-
-<div style={{margin: '0rem 2.5rem'}}>
-	<Image
-		src={ '/images/imdb-rating/app.png' }
-		alt='app'
-		layout='responsive'
-		width={1260}
-		height={879}
-	/>
-</div>
-
-
-### Synopsis
+# Summary
 
 This application takes a chosen film as an input and creates a plot and table describing the rank of the film for the specific genres it is categorized in.
 
 The intent of this project is to compare the average imdb ratings between genres and visualize the distribution of ratings for each genre in an effort to translate a film rating to a genre specific ranking. 
 
-### Data Sources
+<div>
+	![app](/images/imdb-rating/app.png)
+</div>
+
+# Data Sources
 
 2 datasets, 2 APIs, and a web crawler comprise the backend data handling for this project:
 - [IMDb open dataset](https://www.imdb.com/interfaces/)
@@ -48,23 +38,13 @@ The intent of this project is to compare the average imdb ratings between genres
 - [IMDB website](https://www.imdb.com/) (BS4 web crawling)
 
 
-### Methods
+# Methods
 
 The tables 'title.basics.tsv', 'title.ratings.tsv' and 'IMDB movies.csv' were loaded into Microsoft SQL Server as TitleBasics, TitleRatings and TitleExtras respectively. These tables were used for exploratory data analysis and subsequent creation of the tables necessary for visualization (OMDb API was used to source the Rotten Tomatoes and Metacritic ratings). The database schema is shown below (created in [dbdiagram.io](https://dbdiagram.io/))
 
 <div style={{'text-align': 'center'}}>
 	![app](/images/imdb-rating/imdb_table_schema.png)
 </div>
-
-{/* <div style={{margin: '0rem 6.5rem'}}>
-	<Image
-		src={ '/images/imdb-rating/imdb_table_schema.png' }
-		alt='app'
-		layout='responsive'
-		width={677}
-		height={879}
-	/>
-</div> */}
 
 The python package `pyodbc` was then used to load the tables from this database into `pandas` for visualization in `matplotlib` and `plotly`. Dash was used for the frontend of the web application.
 

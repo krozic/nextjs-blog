@@ -21,6 +21,8 @@
 
 .body {
 	background-color: rgb(45, 50, 77);
+	/* background-color: rgb(38, 38, 38); */
+	background-color: rgb(39, 44, 69);
 	border-radius: 1.8rem;
 	filter: drop-shadow(5px, 5px, 5px, grey);
 	padding: 1.5rem;
@@ -174,11 +176,18 @@
 
 .markdown a {
 	color: rgb(134, 123, 255);
+	/* color: rgb(103, 202, 255);
+	color: rgb(84, 195, 255);
+	color: rgb(103, 161, 255);
+	color: rgb(103, 103, 255);
+	color: rgb(108, 103, 255); */
+	/* color: rgb(255, 103, 103); */
   transition: 0.2s;
 	/* border-bottom: 1px white dotted; */
 }
 .markdown a:hover {
   color: grey;
+  color: white;
 	border-bottom: none;
 }
 
@@ -208,6 +217,7 @@
 	/* max-width: 90%; */
 	/* max-height: 35rem; */
 	text-align: center;
+	margin: 2rem 0;
 }
 
 .markdown span {
@@ -305,6 +315,18 @@
 	
 	.tags a {
 		padding: 0.2rem 0.2rem;
+	}
+
+	.tags a:before {
+		vertical-align: -0.05rem;
+		font-size: 1.1rem;
+		/* content: "[ "; */
+	}
+
+	.tags a:after {
+		vertical-align: -0.05rem;
+		font-size: 1.1rem;
+		/* content: " ]"; */
 	}
 
 	/* .sites {
