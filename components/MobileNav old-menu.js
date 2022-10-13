@@ -51,19 +51,16 @@ const StyledBurger = styled.div`
 
 	button:after {
 		/* transform: ${({ open }) => open ? 'translate(0, 0) rotate(0)' : 'translate(0px, -11px) rotate(225deg)'}; */
-		/* transform: ${({ open }) => open ?  'translate(0px, -11px) rotate(-45deg)' : 'translate(0, 0) rotate(0)'}; */
-		transform: ${({ open }) => open ? 'translate(0, 10px)' : 'translate(0)'};
+		transform: ${({ open }) => open ?  'translate(0px, -11px) rotate(-45deg)' : 'translate(0, 0) rotate(0)'};
 		/* width: ${({ open }) => open ?  '2.2rem' : '1.5rem'}; */
-		opacity: ${({ open }) => open ? '0' : '1'};
 	}
 
 	div {
 		/* opacity: ${({ open }) => open ? '1' : '0'}; */
 		/* width: 1.5rem; */
-		/* opacity: ${({ open }) => open ? '0' : '1'}; */
+		opacity: ${({ open }) => open ? '0' : '1'};
 		/* transform: ${({ open }) => open ? 'translate(-35px, 15px) rotate(-55deg)' : 'translate(0)'} */
-		/* transform: ${({ open }) => open ? 'translate(-35px)' : 'translate(0)'} */
-		transform: ${({ open }) => open ?  'translate(0px, 0px) rotate(-45deg)' : 'translate(0, 0) rotate(0)'};
+		transform: ${({ open }) => open ? 'translate(-35px)' : 'translate(0)'}
 		/* transform: rotate(360deg) */
 	}
 `;
