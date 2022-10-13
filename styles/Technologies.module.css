@@ -39,7 +39,7 @@ w l
 }
 
 .logos img:hover {
-	max-height: 3.5rem;
+	/* max-height: 3.5rem; */
 	padding-top: 0.5em;
 	padding-bottom: 2.5em;
 	filter: drop-shadow(15px 30px 5px #222);

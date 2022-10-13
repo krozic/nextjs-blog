@@ -17,18 +17,22 @@ const StyledBurger = styled.div`
 		z-index: 100;
 		position: absolute;
 		top: 30px;
+		top: 22px;
 		right: 35px;
 		display: block;
 		width: 35px;
 		cursor: pointer;
+		transition: 0.3s ease-in-out;
+		margin-top: ${({ open }) => open ?  '0px' : '16px'};
 
 		appearance: none;
 		background: none;
+		/* background: black; */
 		outline: none;
 		border: none;
 	}
 
-	div, button:after, button:before {
+	button:after, button:before {
 		position: block;
 		top: 30px;
 		right: 30px;
@@ -38,29 +42,81 @@ const StyledBurger = styled.div`
 		height: 5px;
 		background-color: white;
 		border-radius: 4px;
-		margin: 6px;
+		margin: 16px 6px;
+		/* margin: 6px 6px; */
+		/* padding: 10px 0px; */
+		/* margin: ${({ open }) => open ? '16px 6px' : '6px 6px'}; */
+	}
+
+	/* div {
 		transition: 0.3s ease-in-out;
+		position: block;
+		top: 30px;
+		right: 30px;
+		content: '';
+		display: block;
+		width: 2.2rem;
+		height: 5px;
+		height: ${({ open }) => open ? '5px' : '1px'};
+		background-color: transparent;
+		border-radius: 3px;
+		margin: 6px 6px;
+
+	} */
+
+	button:before {
 	}
 
 	button:before {
+		transition: 0.3s ease-in-out;
 		/* transform: ${({ open }) => open ? 'translate(0, 0) rotate(0)' : 'translate(0px, 11px) rotate(-225deg)'}; */
-		transform: ${({ open }) => open ? 'translate(0px, 11px) rotate(-225deg)' : 'translate(0, 0) rotate(0)'};
-		transform: ${({ open }) => open ? 'translate(0px, 11px) rotate(45deg)' : 'translate(0, 0) rotate(0)'};
-		/* width: ${({ open }) => open ?  '2.2rem' : '1.5rem'}; */
+		transform: ${({ open }) => open ? 'translate(0px, 11px) rotate(-45deg)' : 'translate(0, 0) rotate(0)'};
+		transform: ${({ open }) => open ?  'translate(0px, 11px) rotate(45deg)' : 'translate(0, 0) rotate(0)'};
+		position: block;
+		top: 30px;
+		right: 30px;
+		content: '';
+		display: block;
+		width: 2.2rem;
+		height: ${({ open }) => open ? '5px' : '7px'};
+		height: 5px;
+		/* height: 3px; */
+		background-color: white;
+		border-radius: 4px;
+		margin: 16px 6px;
+		margin: 6px;
+		margin: ${({ open }) => open ?  '17px 6px' : '6px'};
+		width: ${({ open }) => open ?  '2.2rem' : '1.5rem'};
 	}
 
 	button:after {
+		transition: 0.4s linear;
+		transition: 0.3s ease-in-out;
 		/* transform: ${({ open }) => open ? 'translate(0, 0) rotate(0)' : 'translate(0px, -11px) rotate(225deg)'}; */
-		transform: ${({ open }) => open ?  'translate(0px, -11px) rotate(-45deg)' : 'translate(0, 0) rotate(0)'};
+		transform: ${({ open }) => open ?  'translate(0px, -11px) rotate(45deg)' : 'translate(0, 0) rotate(0)'};
+		transform: ${({ open }) => open ? 'translate(0px, -11px) rotate(-45deg)' : 'translate(0, 0) rotate(0)'};
+		position: block;
+		top: 30px;
+		right: 30px;
+		content: '';
+		display: block;
+		width: 2.2rem;
+		height: 5px;
+		/* height: 3px; */
+		background-color: white;
+		border-radius: 4px;
+		margin: 16px 6px;
+		margin: 6px 6px;
+		margin: ${({ open }) => open ?  '17px 6px' : '6px'};
+		/* margin-left: ${({ open }) => open ?  '6px' : '12px'}; */
 		/* width: ${({ open }) => open ?  '2.2rem' : '1.5rem'}; */
 	}
 
 	div {
 		/* opacity: ${({ open }) => open ? '1' : '0'}; */
-		/* width: 1.5rem; */
-		opacity: ${({ open }) => open ? '0' : '1'};
-		/* transform: ${({ open }) => open ? 'translate(-35px, 15px) rotate(-55deg)' : 'translate(0)'} */
-		transform: ${({ open }) => open ? 'translate(-35px)' : 'translate(0)'}
+		// opacity: ${({ open }) => open ? '0' : '1'};
+		// ^ this is the working one
+		// transform: ${({ open }) => open ? 'translate(0)' : 'translate(-15px)'}
 		/* transform: rotate(360deg) */
 	}
 `;

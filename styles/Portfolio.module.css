@@ -31,9 +31,13 @@
   text-decoration: none;
   /* border: 1px solid #eaeaea; */
   border: rgba(255, 255, 255, 0) solid;
+  border: 2px rgba(255, 255, 255, 0.1) solid;
   border-radius: 10px;
   /* transition: color 0.3s ease, border-color 0.3s ease; */
   transition: 0.3s;
+  background: rgba(56, 53, 63, 0.2);
+  border: 2px rgba(255, 255, 255, 0.1) solid;
+  /* padding: 25px; */
 }
 
 .card:hover,
@@ -42,7 +46,8 @@
   /* color: #0070f3; */
   /* border-color: #0070f3; */
   background-color: rgba(58, 94, 255, 0.454);
-  border: white solid;
+  border: 2px white solid;
+  /* padding: 23px; */
 }
 
 .card h3 {
@@ -132,9 +137,9 @@
   }
 }
 
-@media (hover: none) and (pointer: coarse) {
+/* @media (hover: none) and (pointer: coarse) {
   .card {
-    border: grey solid;
+    border: grey solid; */
     /* background-color: rgba(58, 94, 255, 0.454); */
-  }
-}
+  /* } */
+/* } */

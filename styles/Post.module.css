@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: 1fr;
   justify-content: center;
-  grid-gap: 5rem;
+  grid-gap: 4rem;
   margin: 5rem 1rem;
 }
 
@@ -40,9 +40,16 @@
   text-decoration: none;
   /* border: 1px solid #eaeaea; */
   border: rgba(255, 255, 255, 0) solid;
+  /* border: rgba(67, 5, 255, 0.107) solid; */
+  /* background: radial-gradient(at top left, rgba(83, 83, 83, 0.05) 20%, rgba(0, 0, 0, 0.2) 70%); */
   border-radius: 10px;
   /* transition: color 0.3s ease, border-color 0.3s ease; */
   transition: 0.3s;
+  /* filter:drop-shadow(9px 9px 1px rgba(255, 255, 255, 0.277)) */
+  /* border: rgba(255, 255, 255, 0.1) solid; */
+  background: rgba(60, 60, 60, 0.2);
+  /* padding: 25px; */
+  border: 2px rgba(255, 255, 255, 0.1) solid;
 }
 
 .card:hover,
@@ -50,8 +57,9 @@
 .card:active {
   /* color: #0070f3; */
   /* border-color: #0070f3; */
+  /* padding: 23px; */
   background-color: rgba(58, 94, 255, 0.454);
-  border: white solid;
+  border: 2px white solid;
 }
 
 .card h3 {
@@ -182,8 +190,10 @@
   .card {
     /* border: grey solid; */
     /* border: rgb(65, 156, 205) solid; */
-    border: white solid;
-    background-color: rgba(58, 94, 255, 0.454);
-    background-color: rgba(58, 130, 255, 0.592);
+    /* border: white solid; */
+    /* border: rgba(255, 255, 255, 0.2) solid; */
+    /* background-color: rgba(58, 94, 255, 0.454); */
+    /* background-color: rgba(58, 130, 255, 0.592); */
+    background-color: rgba(78, 78, 78, 0.224);
   }
 }

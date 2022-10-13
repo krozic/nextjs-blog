@@ -5,7 +5,7 @@ import styles from '../../styles/Tags.module.css'
 const tags = ({ tags, count }) => {
 	return (
 		// <div className={ styles.header }>
-		<div>
+		<div className={ styles.allTags }>
 			<h1>All Tags</h1>
 			<hr className='test'></hr>
 			<div className={styles.container}>
