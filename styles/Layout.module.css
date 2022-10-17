@@ -61,7 +61,13 @@
   }
 }
 
-@media (max-width: 600px) {
+
+
+@media (max-width: 680px) {
+  .content {
+    margin: 00px 00px auto;
+  }
+
   .grid {
     width: 100%;
     flex-direction: column;

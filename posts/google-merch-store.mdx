@@ -23,43 +23,19 @@ Extract-transform-loaded (ETL): GA data (1.4 million records) ➜ BigQuery ➜ G
 	
 BigQuery was used to calculate desirable metrics (Page views, time on page, bounces, sessions) for use as KPIs in Tableau. Created filters and parameters for segmentation and comparison analysis.
 
-### What is this data?
-The sample dataset contains obfuscated Google Analytics 360 data from the [Google Merchandise Store](https://www.googlemerchandisestore.com/shop.axd/Home?utm_source=Partners&utm_medium=affiliate&utm_campaign=Data%20Share%20Promo), a real ecommerce store. The Google Merchandise Store sells Google branded merchandise. The data is typical of what you would see for an ecommerce website. It includes the following kinds of information:
+# What is this data?
+The sample dataset contains obfuscated Google Analytics 360 data from the [Google Merchandise Store](https://www.googlemerchandisestore.com/shop.axd/Home?utm_source=Partners&utm_medium=affiliate&utm_campaign=Data%20Share%20Promo). It consists of 900k records (4.2 million unnested), 338 variables, and includes the following kinds of information:
 
 -   Traffic source data: information about where website visitors originate. This includes data about organic traffic, paid search traffic, display traffic, etc.
 -   Content data: information about the behavior of users on the site. This includes the URLs of pages that visitors look at, how they interact with content, etc.
 -   Transactional data: information about the transactions that occur on the Google Merchandise Store website.
 
-### Ways to use it
-Because it provides Google Analytics 360 data from an ecommerce website, the dataset is useful for exploring the benefits of exporting Google Analytics 360 data into BigQuery via the [integration](https://support.google.com/analytics/answer/3437618). Once you have access to the dataset you can run queries such as those in this [guide](https://support.google.com/analytics/answer/4419694) for the period of 1-Aug-2016 to 1-Aug-2017. For example to see the total pageviews the website received for 1-Jan-2017 you would query the dataset with:
-
-`SELECT SUM(totals.pageviews) AS TotalPageviews`
-
+You can query the data in GCP BigQuerry by date in the following way:  
 `FROM 'bigquery-public-data.google_analytics_sample.ga_sessions_20170101'`
 
-### Limitations
-All users have _viewer_ access to the dataset. This means that you can query the dataset and generate reports but you cannot complete administrative tasks. Data for some fields have been obfuscated such as fullVisitorId, or removed such as clientId, adWordsClickInfo and geoNetwork. “Not available in demo dataset” will be the returned for STRING values and “null” will be returned for INTEGER values, when querying the fields that contain no data.
-
-
-### Intro
-900k records (4.2 million unnested), 338 variables
 The schema can be found [here](https://support.google.com/analytics/answer/3437719?hl=en)
 
-```SQL
-select column_name, data_type
-from `your_project.your_dataset.INFORMATION_SCHEMA.COLUMNS`
-```
-
-Shows date as string
-
-### Plan
-KPIs:
-acquisition, activation and retention
-
-monthly or yearly traffic (total sessions, average pageviews, average duration on page) per source and per location, acquisition amounts per channel, and bounce rate per page. Applied filters and parameters accordingly for segmentation analysis and comparison analysis
-
-
-### SQL Breakdown
+# SQL Breakdown
 Collect 8 descriptors and 5 Measures for import
 
 Descriptors:
@@ -73,12 +49,13 @@ Descriptors:
 - city 
 
 Measures:
-- pageviews & unique_pageviews
+- pageviews
+- unique_pageviews
 - total_time_on_page_combined
 - total_bounces
 - total_sessions
 
-#### Constant Categories
+## Constant Categories
 The descriptor variables will be selected for all measure queries.
 ```SQL
 SUBSTR(date, 1, 4) AS hit_year, 
@@ -91,11 +68,7 @@ geonetwork.country as country,
 geonetwork.city as city
 ```
 
-#### Pageviews
-
-
-
-### Tableau Calculations
+# Tableau Calculations
 Parameters:
 - Comparison Selector: M/M (current month vs previous month), Y/Y (current month vs month from previous year), YTD (current YTD vs previous YTD)
 - Date Selector: Select the Month/Year of interest
@@ -129,11 +102,5 @@ YTD: Year-to-Date
 PYTD: Previous Year-to-Date
 LTD: Life-to-Date (for grey charts)
 
-
-
 For Percent of Total (Avg Unique Pageviews CM for Channel Grouping), the calculation must be modified from TOTAL() to WINDOW_SUM(). This is because the TOTAL() function does not work properly on measures that are already an aggregate function. [ref](https://kb.tableau.com/articles/issue/percent-of-total-adds-up-to-more-than-100)
-
-Bounces:
-- Since every session contains multiple rows of "webpage hits", the non
-
 

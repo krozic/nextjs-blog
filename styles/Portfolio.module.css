@@ -105,6 +105,7 @@
 @media (max-width: 1170px) {
   .grid {
     grid-template-columns: 1fr 1fr;
+    margin: 5rem 1rem;
   }
   .image {
     height: 12rem;
@@ -114,7 +115,6 @@
 @media (max-width: 850px) {
   .grid {
     grid-template-columns: 1fr;
-    margin: 5rem 0em;
   }
 
   .image {

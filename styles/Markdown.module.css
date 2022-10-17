@@ -158,6 +158,11 @@
 	word-wrap: break-word;
 }
 
+.markdown ::-webkit-scrollbar-track {
+  background: rgb(40, 44, 52);
+	border-radius: 0.4rem;
+}
+
 .markdown h1,
 .markdown h2,
 .markdown h3,
@@ -222,7 +227,7 @@
 
 .markdown span {
 	/* display: inline-block; */
-	margin: 3rem 0rem;
+	/* margin: 3rem 0rem; */
 }
 
 .markdown pre {
@@ -273,8 +278,19 @@
 	}
 }
 
+@media (max-width: 680px) {
+	.body {
+		border-radius: 0px;
+	}
+
+}
+
 @media (max-width: 450px) {
+	.body {
+		padding: 0.5rem;
+	}
 	.box {
+		margin: 0.5rem 0.5rem 2rem;
 		font-size: 0.8rem;
 		padding: 1rem 1.5rem 0rem;
 	}
@@ -284,15 +300,15 @@
 
 	.image {
 		height: 14rem;
-		margin: 0rem 0rem 0rem;
+		margin: 1rem 1rem 0rem;
 		padding-bottom: 0;
 	}
 
 	.markdown {
 		padding: 2rem 0 0 0;
+		text-align: left;
 	}
 	.markdown h1 {
-		font-size: 1.4rem;
 		padding-top: 0rem;
 	}
 
@@ -332,26 +348,26 @@
 	/* .sites {
 	} */
 
-
-
-
-
-
-
-
 	.markdown li {
-		padding: 0.2rem;
+		padding: 0.2rem 0rem;
 		font-size: 0.8rem
 	}
 
 	.markdown ul {
-		padding-left: 1rem;
+		padding-left: 0rem;
 		padding-bottom: 0rem;
 	}
 
+
+
+
+
+
+
+
 	.markdown span {
 		/* display: inline-block; */
-		padding: 3rem 0rem;
+		/* padding: 3rem 0rem; */
 	}
 
 	.markdown pre {

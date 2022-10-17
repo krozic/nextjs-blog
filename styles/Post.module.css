@@ -186,14 +186,14 @@
   }
 }
 
-@media (hover: none) and (pointer: coarse) {
-  .card {
+/* @media (hover: none) and (pointer: coarse) { */
+  /* .card { */
     /* border: grey solid; */
     /* border: rgb(65, 156, 205) solid; */
     /* border: white solid; */
     /* border: rgba(255, 255, 255, 0.2) solid; */
     /* background-color: rgba(58, 94, 255, 0.454); */
     /* background-color: rgba(58, 130, 255, 0.592); */
-    background-color: rgba(78, 78, 78, 0.224);
-  }
-}
+    /* background-color: rgba(78, 78, 78, 0.224); */
+  /* } */
+/* } */
