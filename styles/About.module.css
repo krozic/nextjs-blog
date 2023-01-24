@@ -28,7 +28,7 @@
 }
 
 .links {
-	margin: 0 0 2rem;
+	margin: 1rem 0 2rem;
 }
 
 .links a {
@@ -63,7 +63,7 @@
 
 /* .linksGrid {
 	filter: brightness(0.5);
-	transition: 0.3s;
+	transition: 0.5s;
 }
 
 .linksGrid:hover {
